@@ -21,4 +21,11 @@ contract MyContract is ERC1155Drop {
             _primarySaleRecipient
         )
     {}
+        function _transferTokensOnClaim(
+        address _receiver,
+        uint256 _tokenId,
+        uint256 _quantity
+    ) internal override {
+        _mint(_receiver, _tokenId, _quantity, "");
+    }
 }
