@@ -8,6 +8,7 @@ contract MyContract is ERC1155Drop {
     mapping(uint256 => uint256) baseEvolution;
 
     uint256 public constant ENERGY_TOKEN_ID = 0;
+    uint256 public constant NEEDS_BASE_TOKENS_TO_EVOLVE = 1;
 
     modifier onlyAdmin() {
         require(msg.sender == owner(), "Account: not admin.");
@@ -41,7 +42,7 @@ contract MyContract is ERC1155Drop {
     ) internal virtual override {
         // Claiming evolved token requires payment/burning in energy token
         if (isEvolution[_tokenId]) {
-            _verifyEvolutionCondition(_receiver);
+            _verifyEvolutionCondition(_receiver, _tokenId);
             // burn base egg
             _burn(_receiver, baseEvolution[_tokenId], 1);
             // burn energy token
@@ -63,10 +64,18 @@ contract MyContract is ERC1155Drop {
         evolutionPayment = _evolutionPayment;
     }
 
-    function _verifyEvolutionCondition(address _receiver) internal view {
+    function getEvolutionPayment() public view returns (uint256) {
+        return evolutionPayment;
+    }
+
+    function _verifyEvolutionCondition(address _receiver, uint256 _tokenId) internal view {
         require(
             balanceOf[_receiver][ENERGY_TOKEN_ID] >= evolutionPayment,
             "Gacha: not enough energy tokens."
+        );
+        require(
+            balanceOf[_receiver][baseEvolution[_tokenId]] >= NEEDS_BASE_TOKENS_TO_EVOLVE,
+            "Gacha: not a base token holders."
         );
     }
 }
