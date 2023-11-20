@@ -1,0 +1,57 @@
+{
+  "method": "claim",
+  "types": [
+    "address",
+    "uint256",
+    "uint256",
+    "address",
+    "uint256",
+    "(bytes32[],uint256,uint256,address)",
+    "bytes"
+  ],
+  "inputs": [
+    "0x911d82b108804A18022d0A2621B2Fc608DEF6FCA",
+    {
+      "type": "BigNumber",
+      "hex": "0x00"
+    },
+    {
+      "type": "BigNumber",
+      "hex": "0x01"
+    },
+    "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    {
+      "type": "BigNumber",
+      "hex": "0x00"
+    },
+    [
+      ["0x0000000000000000000000000000000000000000000000000000000000000000"],
+      {
+        "type": "BigNumber",
+        "hex": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      {
+        "type": "BigNumber",
+        "hex": "0x00"
+      },
+      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+    ],
+    "0x"
+  ],
+  "names": [
+    "_receiver",
+    "_tokenId",
+    "_quantity",
+    "_currency",
+    "_pricePerToken",
+    [
+      "_allowlistProof",
+      ["proof", "quantityLimitPerWallet", "pricePerToken", "currency"]
+    ],
+    "_data"
+  ]
+}
+
+
+// [["0x0000000000000000000000000000000000000000000000000000000000000000"], 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, 0x00, 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE]
+
