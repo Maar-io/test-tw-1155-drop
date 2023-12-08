@@ -4,6 +4,19 @@ pragma solidity ^0.8.0;
 import "@thirdweb-dev/contracts/base/ERC1155Drop.sol";
 
 contract MyContract is ERC1155Drop {
+    mapping(uint256 => bool) isEvolution;
+    mapping(uint256 => uint256) baseEvolution;
+
+    uint256 public constant ENERGY_TOKEN_ID = 0;
+    uint256 public constant NEEDS_BASE_TOKENS_TO_EVOLVE = 1;
+
+    modifier onlyAdmin() {
+        require(msg.sender == owner(), "Account: not admin.");
+        _;
+    }
+
+    uint256 evolutionPayment = 2;
+
     constructor(
         address _defaultAdmin,
         string memory _name,
@@ -21,11 +34,48 @@ contract MyContract is ERC1155Drop {
             _primarySaleRecipient
         )
     {}
-        function _transferTokensOnClaim(
+
+    function _transferTokensOnClaim(
         address _receiver,
         uint256 _tokenId,
         uint256 _quantity
-    ) internal override {
+    ) internal virtual override {
+        // Claiming evolved token requires payment/burning in energy token
+        if (isEvolution[_tokenId]) {
+            _verifyEvolutionCondition(_receiver, _tokenId);
+            // burn base egg
+            _burn(_receiver, baseEvolution[_tokenId], 1);
+            // burn energy token
+            _burn(_receiver, ENERGY_TOKEN_ID, evolutionPayment);
+        }
+
         _mint(_receiver, _tokenId, _quantity, "");
+    }
+
+    function setEvolution(
+        uint256 _baseTokenId,
+        uint256 _evolvedTokenId
+    ) public onlyAdmin {
+        isEvolution[_evolvedTokenId] = true;
+        baseEvolution[_evolvedTokenId] = _baseTokenId;
+    }
+
+    function setEvolutionPayment(uint256 _evolutionPayment) public onlyAdmin {
+        evolutionPayment = _evolutionPayment;
+    }
+
+    function getEvolutionPayment() public view returns (uint256) {
+        return evolutionPayment;
+    }
+
+    function _verifyEvolutionCondition(address _receiver, uint256 _tokenId) internal view {
+        require(
+            balanceOf[_receiver][ENERGY_TOKEN_ID] >= evolutionPayment,
+            "Gacha: not enough energy tokens."
+        );
+        require(
+            balanceOf[_receiver][baseEvolution[_tokenId]] >= NEEDS_BASE_TOKENS_TO_EVOLVE,
+            "Gacha: not a base token holders."
+        );
     }
 }
